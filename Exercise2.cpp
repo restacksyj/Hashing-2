@@ -1,4 +1,4 @@
-// Problem: Subarray sum equals k
+// Problem: Contiguous subarray
 //  Time Complexity : O(n)
 //  Space Complexity : O(n)
 //  Did this code successfully run on Leetcode : Yes
@@ -7,28 +7,34 @@
 // Your code here along with comments explaining your approach in three
 // sentences only
 // 1. We use running sum pattern here to remove nested iterations
-// 2. We maintain a running sum if rSum - target is seen before, we add the
-// frequency of how many times it's been seen
-// 3. And we update the hashmap accordingly
+// 2. We maintain a running sum by incrementing sum by 1 if it's 1 and
+// decreasing by 1 if it's 0
+// 3. If we encounter a rSum, that we have already seen before, that means it's
+// balanced and we can store the length
 #include <bits/stdc++.h>
 using namespace std;
 
 class Solution {
 public:
-  int subarraySum(vector<int> &nums, int k) {
+  int findMaxLength(vector<int> &nums) {
     int n = (int)nums.size();
-    unordered_map<int, int> u;
-    u[0] = 1;
+    int maxi = 0;
     int rSum = 0;
-    int res = 0;
-    for (int i = 0; i < n; i++) {
-      rSum += nums[i];
-      int findVal = rSum - k;
-      if (u.count(findVal) > 0) {
-        res += u[findVal];
+    unordered_map<int, int> u;
+    u[0] = -1;
+
+    for (int i = 0; i < n; i++) { // O(n)
+      if (nums[i] == 0)
+        rSum--;
+      else
+        rSum++;
+      if (u.count(rSum) > 0) {
+        maxi = max(maxi, i - u[rSum]);
+      } else {
+        u[rSum] = i;
       }
-      u[rSum]++;
     }
-    return res;
+
+    return maxi;
   }
 };
